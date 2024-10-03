@@ -2,7 +2,7 @@ import { cart, addToCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
-let productsHTML = "";
+let productsHTML = ""; // to store html of each product
 
 products.forEach((product) => {
   productsHTML += `
@@ -49,7 +49,7 @@ products.forEach((product) => {
 
             <div class="product-spacer"></div>
 
-            <div class="added-to-cart">
+            <div class="added-to-cart js-added-to-cart-${product.id}">
                 <img src="images/icons/checkmark.png" />
                 Added
             </div>
@@ -60,25 +60,84 @@ products.forEach((product) => {
             </div>`;
 });
 
-document.querySelector(".js-products-grid").innerHTML = productsHTML;
+document.querySelector(".js-products-grid").innerHTML = productsHTML; //update the inner html on the main page
 
+// update the cart quantity on the main page
 function updateCartQuantity() {
   let cartQuantity = 0;
   cart.forEach((cartItem) => {
     cartQuantity += cartItem.quantity;
   });
-
   document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
 }
 
+//const addedMessageTimeouts = {}; // To store timeout IDs for each product
+
+//changes on cliking add to cart button
 document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+  /*This solution uses a feature of JavaScript called a
+    closure. Each time we run the loop, it will create 
+    a new variable called addedMessageTimeoutId and do
+    button.addEventListener().
+    
+    Then, because of closure, the function we give to
+    button.addEventListener() will get a unique copy
+    of the addedMessageTimeoutId variable and it will
+    keep this copy of the variable forever.
+    (Reminder: closure = if a function has access to a
+    value/variable, it will always have access to that
+    value/variable).
+    
+    This allows us to create many unique copies of the
+    addedMessageTimeoutId variable (one for every time
+    we run the loop) so it lets us keep track of many
+    timeoutIds (one for each product). */
+  let addedMessageTimeoutId;
   button.addEventListener("click", () => {
-    const productId = button.dataset.productId;
+    const productId = button.dataset.productId; //get the product ID
+
     const quantitySelector = document.querySelector(
       `.js-quantity-selector-${productId}`
     );
-    const quantity = Number(quantitySelector.value);
-    addToCart(productId, quantity);
-    updateCartQuantity();
+    const quantity = Number(quantitySelector.value); //get the quantity you select for a product
+
+    addToCart(productId, quantity); //logic to add product to cart
+    updateCartQuantity(); //update cart UI
+
+    const addedMessage = document.querySelector(
+      `.js-added-to-cart-${productId}`
+    );
+    addedMessage.classList.add("added-to-cart-visible"); //show the message
+
+    // Check if a previous timeoutId exists. If it does,
+    // we will stop it.
+    if (addedMessageTimeoutId) {
+      clearTimeout(addedMessageTimeoutId);
+    }
+
+    const timeoutId = setTimeout(() => {
+      addedMessage.classList.remove("added-to-cart-visible");
+    }, 2000);
+
+    // Save the timeoutId so we can stop it later.
+    addedMessageTimeoutId = timeoutId;
+
+    /* // If a previous timeout exists, cancel it
+    const previousTimeoutId = addedMessageTimeouts[productId];
+    if (previousTimeoutId) {
+      clearTimeout(previousTimeoutId);
+    }
+
+    // Start a new timeout to hide the message after 2 seconds
+    const timeoutId = setTimeout(() => {
+      addedMessage.classList.remove("added-to-cart-visible");
+    }, 2000);
+
+    // Store the new timeout ID
+    addedMessageTimeouts[productId] = timeoutId; */
+
+    // setTimeout(() => {
+    //   addedMessage.classList.remove("added-to-cart-visible");
+    // }, 2000);
   });
 });
