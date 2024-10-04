@@ -1,19 +1,22 @@
-import { cart, removeFromCart } from "../data/cart.js";
+import { cart, removeFromCart, calculateCartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
 let cartSummaryHTML = "";
 
+//check which product to add inside cart
 cart.forEach((cartItem) => {
-  const productId = cartItem.productId;
+  const productId = cartItem.productId; // Extracting productId from the cart item
   let machingProduct;
 
+  // Finding the matching product from the product list using the productId
   products.forEach((product) => {
     if (product.id === productId) {
       machingProduct = product;
     }
   });
 
+  // Generating the HTML structure for each cart item
   cartSummaryHTML += `
         <div class="cart-item-container 
         js-cart-item-container-${machingProduct.id}">
@@ -36,9 +39,13 @@ cart.forEach((cartItem) => {
                   <span> Quantity: <span class="quantity-label">${
                     cartItem.quantity
                   }</span> </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary js-update-link"  data-product-id="${
+                    machingProduct.id
+                  }">
                     Update
                   </span>
+                  <input class="quantity-input">
+                  <span class="save-quantity-link link-primary">Save</span>
                   <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${
                     machingProduct.id
                   }">
@@ -90,17 +97,28 @@ cart.forEach((cartItem) => {
           </div>
 `;
 });
-
+// Adding the generated cart summary HTML to the DOM
 document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
 
+// Adding event listeners for the "Delete" button for each cart item
 document.querySelectorAll(".js-delete-link").forEach((link) => {
   link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-    removeFromCart(productId);
+    const productId = link.dataset.productId; // Get the product ID from the data attribute
+    removeFromCart(productId); // Remove the product from the cart
 
     const container = document.querySelector(
-      `.js-cart-item-container-${productId}`
+      `.js-cart-item-container-${productId}` // Select the container for the deleted product
     );
-    container.remove();
+    container.remove(); // Remove the HTML element for the deleted cart item
+    updateCartQuantity();
   });
 });
+
+// updating html inside checkout brackets
+function updateCartQuantity() {
+  const cartQuantity = calculateCartQuantity();
+  document.querySelector(
+    ".js-return-to-home-link"
+  ).innerHTML = ` ${cartQuantity} items`;
+}
+updateCartQuantity();

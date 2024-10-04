@@ -33,9 +33,20 @@ export function addToCart(productId, quantity) {
   saveToStorage();
 }
 
-export function removeFromCart(productId) {
-  const newCart = [];
+export function calculateCartQuantity() {
+  let cartQuantity = 0;
 
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+  });
+
+  return cartQuantity;
+}
+
+export function removeFromCart(productId) {
+  const newCart = []; //make new cart
+
+  //push all items expect the same product id
   cart.forEach((cartItem) => {
     if (cartItem.productId !== productId) {
       newCart.push(cartItem);
