@@ -3,6 +3,7 @@ import {
   removeFromCart,
   calculateCartQuantity,
   updateQuantity,
+  updateDeliveryOption,
 } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
@@ -97,7 +98,7 @@ cart.forEach((cartItem) => {
 `;
 });
 
-// Generate HTML for delivery date
+// Generate HTML for delivery date and update on the page
 function deliveryOptionsHTML(matchingProduct, cartItem) {
   let html = "";
 
@@ -117,7 +118,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
     const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
 
     html += `
-               <div class="delivery-option">
+               <div class="delivery-option js-delivery-option"
+               data-product-id="${matchingProduct.id}"
+               data-delivery-option-id="${deliveryOption.id}">
                   <input
                     type="radio"
                     ${isChecked ? "checked" : ""}
@@ -209,6 +212,14 @@ document.querySelectorAll(".js-save-link").forEach((link) => {
     quantityLabel.innerHTML = newQuantity;
 
     updateCartQuantity(); //updating html inside checkout brackets
+  });
+});
+
+//we have to add event listener to each radio button, to save it in the cart
+document.querySelectorAll(".js-delivery-option").forEach((element) => {
+  element.addEventListener("click", () => {
+    const { productId, deliveryOptionId } = element.dataset; //shorthand property
+    updateDeliveryOption(productId, deliveryOptionId);
   });
 });
 

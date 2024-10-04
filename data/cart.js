@@ -17,15 +17,15 @@ function saveToStorage() {
 }
 
 export function addToCart(productId, quantity) {
-  let machingItem;
+  let matchingItem;
   cart.forEach((cartItem) => {
     if (productId === cartItem.productId) {
-      machingItem = cartItem;
+      matchingItem = cartItem;
     }
   });
 
-  if (machingItem) {
-    machingItem.quantity += quantity;
+  if (matchingItem) {
+    matchingItem.quantity += quantity;
   } else {
     cart.push({
       productId: productId,
@@ -49,13 +49,13 @@ export function calculateCartQuantity() {
 
 // update quantity when click on update and save
 export function updateQuantity(productId, newQuantity) {
-  let machingItem;
+  let matchingItem;
   cart.forEach((cartItem) => {
     if (productId === cartItem.productId) {
-      machingItem = cartItem;
+      matchingItem = cartItem;
     }
   });
-  machingItem.quantity = newQuantity;
+  matchingItem.quantity = newQuantity;
   saveToStorage();
 }
 
@@ -70,5 +70,21 @@ export function removeFromCart(productId) {
     }
   });
   cart = newCart;
+  saveToStorage();
+}
+
+// update delivery option id in the backend of the cart, so we need to know the product we want to update as well as the delivery option that we chose in radio button
+// step1 loop through the cart and find the product
+// step2 update the deliveryOptionId of the product
+
+export function updateDeliveryOption(productId, deliveryOptionId) {
+  let matchingItem;
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      matchingItem = cartItem;
+    }
+  });
+
+  matchingItem.deliveryOptionId = deliveryOptionId;
   saveToStorage();
 }
