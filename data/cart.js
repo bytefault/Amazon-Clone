@@ -43,6 +43,19 @@ export function calculateCartQuantity() {
   return cartQuantity;
 }
 
+// update quantity when click on update and save
+export function updateQuantity(productId, newQuantity) {
+  let machingItem;
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      machingItem = cartItem;
+    }
+  });
+  machingItem.quantity = newQuantity;
+  saveToStorage();
+}
+
+// when we click on delete, remove from cart
 export function removeFromCart(productId) {
   const newCart = []; //make new cart
 
