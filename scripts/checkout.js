@@ -16,212 +16,222 @@ const today = dayjs();
 const deliveryDate = today.add(7, "days");
 console.log(deliveryDate.format("dddd, MMMM D"));
 
-let cartSummaryHTML = "";
+function renderOrderSummary() {
+  let cartSummaryHTML = "";
 
-//check which product to add inside cart
-cart.forEach((cartItem) => {
-  const productId = cartItem.productId; // Extracting productId from the cart item
-  let matchingProduct;
+  //check which product to add inside cart
+  cart.forEach((cartItem) => {
+    const productId = cartItem.productId; // Extracting productId from the cart item
+    let matchingProduct;
 
-  // Finding the matching product from the product list using the productId
-  products.forEach((product) => {
-    if (product.id === productId) {
-      matchingProduct = product;
-    }
-  });
+    // Finding the matching product from the product list using the productId
+    products.forEach((product) => {
+      if (product.id === productId) {
+        matchingProduct = product;
+      }
+    });
 
-  //get deliveryOptionId out of the cart, so that we can put delivery date at the top of each cart
-  const deliveryOptionId = cartItem.deliveryOptionId;
+    //get deliveryOptionId out of the cart, so that we can put delivery date at the top of each cart
+    const deliveryOptionId = cartItem.deliveryOptionId;
 
-  let deliveryOption;
+    let deliveryOption;
 
-  deliveryOptions.forEach((option) => {
-    if (option.id === deliveryOptionId) {
-      deliveryOption = option;
-    }
-  });
+    deliveryOptions.forEach((option) => {
+      if (option.id === deliveryOptionId) {
+        deliveryOption = option;
+      }
+    });
 
-  const today = dayjs();
-  const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-  const dateString = deliveryDate.format("dddd, MMMM D");
-
-  // Generating the HTML structure for each cart item
-  cartSummaryHTML += `
-        <div class="cart-item-container 
-        js-cart-item-container-${matchingProduct.id}">
-            <div class="delivery-date">Delivery date: ${dateString}</div>
-
-            <div class="cart-item-details-grid">
-              <img
-                class="product-image"
-                src="${matchingProduct.image}"
-              />
-
-              <div class="cart-item-details">
-                <div class="product-name">
-                 ${matchingProduct.name}
-                </div>
-                <div class="product-price">$${formatCurrency(
-                  matchingProduct.priceCents
-                )}</div>
-                <div class="product-quantity">
-                  <span> Quantity: <span class="quantity-label js-quantity-label-${
-                    matchingProduct.id
-                  }">${cartItem.quantity}</span> </span>
-                  <span class="update-quantity-link link-primary js-update-link"  data-product-id="${
-                    matchingProduct.id
-                  }">
-                    Update
-                  </span>
-                  <input class="quantity-input js-quantity-input-${
-                    matchingProduct.id
-                  }">
-                  <span class="save-quantity-link link-primary js-save-link" data-product-id="${
-                    matchingProduct.id
-                  }">Save</span>
-                  <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${
-                    matchingProduct.id
-                  }">
-                    Delete
-                  </span>
-                </div>
-              </div>
-
-              <div class="delivery-options">
-                <div class="delivery-options-title">
-                  Choose a delivery option:
-                </div>
-                ${deliveryOptionsHTML(matchingProduct, cartItem)} 
-              </div>
-            </div>
-          </div>
-`;
-});
-
-// Generate HTML for delivery date and update on the page
-function deliveryOptionsHTML(matchingProduct, cartItem) {
-  let html = "";
-
-  //Use Ecmascript external library dayjs to generate today date
-  deliveryOptions.forEach((deliveryOption) => {
     const today = dayjs();
     const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
     const dateString = deliveryDate.format("dddd, MMMM D");
 
-    // Generate price using ternary operator
-    const priceString =
-      deliveryOption.priceCents === 0
-        ? "FREE"
-        : `$${formatCurrency(deliveryOption.priceCents)} -`;
+    // Generating the HTML structure for each cart item
+    cartSummaryHTML += `
+            <div class="cart-item-container 
+            js-cart-item-container-${matchingProduct.id}">
+                <div class="delivery-date">Delivery date: ${dateString}</div>
 
-    //we dont want all delivery option to be checked or unchecked, we only want it to be checked if it matches the delivery option id that is saved in cart
-    const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
-
-    html += `
-               <div class="delivery-option js-delivery-option"
-               data-product-id="${matchingProduct.id}"
-               data-delivery-option-id="${deliveryOption.id}">
-                  <input
-                    type="radio"
-                    ${isChecked ? "checked" : ""}
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingProduct.id}"
+                <div class="cart-item-details-grid">
+                  <img
+                    class="product-image"
+                    src="${matchingProduct.image}"
                   />
-                  <div>
-                    <div class="delivery-option-date">${dateString}</div>
-                    <div class="delivery-option-price">${priceString} Shipping</div>
+
+                  <div class="cart-item-details">
+                    <div class="product-name">
+                    ${matchingProduct.name}
+                    </div>
+                    <div class="product-price">$${formatCurrency(
+                      matchingProduct.priceCents
+                    )}</div>
+                    <div class="product-quantity">
+                      <span> Quantity: <span class="quantity-label js-quantity-label-${
+                        matchingProduct.id
+                      }">${cartItem.quantity}</span> </span>
+                      <span class="update-quantity-link link-primary js-update-link"  data-product-id="${
+                        matchingProduct.id
+                      }">
+                        Update
+                      </span>
+                      <input class="quantity-input js-quantity-input-${
+                        matchingProduct.id
+                      }">
+                      <span class="save-quantity-link link-primary js-save-link" data-product-id="${
+                        matchingProduct.id
+                      }">Save</span>
+                      <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${
+                        matchingProduct.id
+                      }">
+                        Delete
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="delivery-options">
+                    <div class="delivery-options-title">
+                      Choose a delivery option:
+                    </div>
+                    ${deliveryOptionsHTML(matchingProduct, cartItem)} 
                   </div>
                 </div>
+              </div>
     `;
   });
 
-  return html;
+  // Generate HTML for delivery date and update on the page
+  function deliveryOptionsHTML(matchingProduct, cartItem) {
+    let html = "";
+
+    //Use Ecmascript external library dayjs to generate today date
+    deliveryOptions.forEach((deliveryOption) => {
+      const today = dayjs();
+      const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+      const dateString = deliveryDate.format("dddd, MMMM D");
+
+      // Generate price using ternary operator
+      const priceString =
+        deliveryOption.priceCents === 0
+          ? "FREE"
+          : `$${formatCurrency(deliveryOption.priceCents)} -`;
+
+      //we dont want all delivery option to be checked or unchecked, we only want it to be checked if it matches the delivery option id that is saved in cart
+      const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
+
+      html += `
+                  <div class="delivery-option js-delivery-option"
+                  data-product-id="${matchingProduct.id}"
+                  data-delivery-option-id="${deliveryOption.id}">
+                      <input
+                        type="radio"
+                        ${isChecked ? "checked" : ""}
+                        class="delivery-option-input"
+                        name="delivery-option-${matchingProduct.id}"
+                      />
+                      <div>
+                        <div class="delivery-option-date">${dateString}</div>
+                        <div class="delivery-option-price">${priceString} Shipping</div>
+                      </div>
+                    </div>
+        `;
+    });
+
+    return html;
+  }
+
+  // Adding the generated cart summary HTML to the DOM
+  document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
+
+  // Adding event listeners for the "Delete" button for each cart item
+  document.querySelectorAll(".js-delete-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId; // Get the product ID from the data attribute
+      removeFromCart(productId); // Remove the product from the cart
+
+      const container = document.querySelector(
+        `.js-cart-item-container-${productId}` // Select the container for the deleted product
+      );
+      container.remove(); // Remove the HTML element for the deleted cart item
+      updateCartQuantity();
+    });
+  });
+
+  // updating html inside checkout brackets
+  function updateCartQuantity() {
+    const cartQuantity = calculateCartQuantity();
+    document.querySelector(
+      ".js-return-to-home-link"
+    ).innerHTML = ` ${cartQuantity} items`;
+  }
+  updateCartQuantity();
+
+  // changes on clicking update button
+  document.querySelectorAll(".js-update-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId;
+      //get the cart item container for the product
+      const container = document.querySelector(
+        `.js-cart-item-container-${productId}`
+      );
+      container.classList.add("is-editing-quantity"); // show input and save button, hide update button
+    });
+  });
+
+  // changes on clicking save button
+  document.querySelectorAll(".js-save-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId;
+
+      /* Here's an example of a feature we can add: validation.
+        Note: we need to move the quantity-related code up
+        because if the new quantity is not valid, we should
+        return early and NOT run the rest of the code. This
+        technique is called an "early return". */
+
+      const quantityInput = document.querySelector(
+        `.js-quantity-input-${productId}`
+      );
+      const newQuantity = Number(quantityInput.value);
+
+      if (newQuantity < 0 || newQuantity >= 1000) {
+        alert("Quantity must be at least 0 and less than 1000");
+        return;
+      }
+
+      updateQuantity(productId, newQuantity); //update quantity in cart
+
+      //get the cart item container for the product
+      const container = document.querySelector(
+        `.js-cart-item-container-${productId}`
+      );
+      container.classList.remove("is-editing-quantity"); //hide input and save button, only show update button, just opposite what we did above
+
+      //update the quantity in the html
+      const quantityLabel = document.querySelector(
+        `.js-quantity-label-${productId}`
+      );
+      quantityLabel.innerHTML = newQuantity;
+
+      updateCartQuantity(); //updating html inside checkout brackets
+    });
+  });
+
+  //we have to add event listener to each radio button, to save it in the cart
+  document.querySelectorAll(".js-delivery-option").forEach((element) => {
+    element.addEventListener("click", () => {
+      const { productId, deliveryOptionId } = element.dataset; //shorthand property
+      updateDeliveryOption(productId, deliveryOptionId);
+      renderOrderSummary(); //re run the code, it will generate new html again, deleting previous html
+    });
+  });
 }
 
-// Adding the generated cart summary HTML to the DOM
-document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
+renderOrderSummary();
 
-// Adding event listeners for the "Delete" button for each cart item
-document.querySelectorAll(".js-delete-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId; // Get the product ID from the data attribute
-    removeFromCart(productId); // Remove the product from the cart
-
-    const container = document.querySelector(
-      `.js-cart-item-container-${productId}` // Select the container for the deleted product
-    );
-    container.remove(); // Remove the HTML element for the deleted cart item
-    updateCartQuantity();
-  });
-});
-
-// updating html inside checkout brackets
-function updateCartQuantity() {
-  const cartQuantity = calculateCartQuantity();
-  document.querySelector(
-    ".js-return-to-home-link"
-  ).innerHTML = ` ${cartQuantity} items`;
-}
-updateCartQuantity();
-
-// changes on clicking update button
-document.querySelectorAll(".js-update-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-    //get the cart item container for the product
-    const container = document.querySelector(
-      `.js-cart-item-container-${productId}`
-    );
-    container.classList.add("is-editing-quantity"); // show input and save button, hide update button
-  });
-});
-
-// changes on clicking save button
-document.querySelectorAll(".js-save-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-
-    /* Here's an example of a feature we can add: validation.
-    Note: we need to move the quantity-related code up
-    because if the new quantity is not valid, we should
-    return early and NOT run the rest of the code. This
-    technique is called an "early return". */
-
-    const quantityInput = document.querySelector(
-      `.js-quantity-input-${productId}`
-    );
-    const newQuantity = Number(quantityInput.value);
-
-    if (newQuantity < 0 || newQuantity >= 1000) {
-      alert("Quantity must be at least 0 and less than 1000");
-      return;
-    }
-
-    updateQuantity(productId, newQuantity); //update quantity in cart
-
-    //get the cart item container for the product
-    const container = document.querySelector(
-      `.js-cart-item-container-${productId}`
-    );
-    container.classList.remove("is-editing-quantity"); //hide input and save button, only show update button, just opposite what we did above
-
-    //update the quantity in the html
-    const quantityLabel = document.querySelector(
-      `.js-quantity-label-${productId}`
-    );
-    quantityLabel.innerHTML = newQuantity;
-
-    updateCartQuantity(); //updating html inside checkout brackets
-  });
-});
-
-//we have to add event listener to each radio button, to save it in the cart
-document.querySelectorAll(".js-delivery-option").forEach((element) => {
-  element.addEventListener("click", () => {
-    const { productId, deliveryOptionId } = element.dataset; //shorthand property
-    updateDeliveryOption(productId, deliveryOptionId);
-  });
-});
+/* 
+now after updating/saving delivery option id in the cart, we need to update the page, change the html, taaki green color me delivery date dikhai de, lekin refresh karne ke baad delivery date dikhta hai, but we want to change it immediately we select radio button.
+so far in this course, we solve this problem is once we click this we are going to use a dom to get this element here and then update the text directly however the problem with this approach is that we need to update the page one by one and later there ,ight be lots of places on the page that we need  to change . for eg- when we change the radio button we also need to change the numbers in order summary accordingly, so there are lot of thing we need to update one by one, but there is a better way to update the page, we have already all of the code that takes our data and generates the html, so now we will re run all this code and regenerate, through function renderOrderSummary()
+*/
 
 /* 
 Imagine there is an e-commerce website where you are buying a product. You add a beautiful ring to your cart and now you need to choose how fast you want it delivered to your house. The website gives you 3 delivery options:
