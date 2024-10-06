@@ -13,6 +13,7 @@ import {
   getDeliveryOption,
 } from "../../data/deliveryOptions.js";
 import { renderPaymentSummary } from "./paymentSummary.js";
+import { renderCheckoutHeader } from "./checkoutHeader.js";
 
 export function renderOrderSummary() {
   let cartSummaryHTML = "";
@@ -135,10 +136,16 @@ export function renderOrderSummary() {
       const productId = link.dataset.productId; // Get the product ID from the data attribute
       removeFromCart(productId); // Remove the product from the cart
 
-      const container = document.querySelector(
+      //instead of using the dom and updating the page directly with .delete(), regenerate the html using order summary
+
+      /* const container = document.querySelector(
         `.js-cart-item-container-${productId}` // Select the container for the deleted product
       );
-      container.remove(); // Remove the HTML element for the deleted cart item
+      container.remove(); // Remove the HTML element for the deleted cart item */
+
+      //Ensure that the header element containing .return-to-home-link is rendered before you call updateCartQuantity(). If updateCartQuantity() is running before the header is rendered, it will not find the element. You can render the header first by calling renderCheckoutHeader() before updateCartQuantity().
+      renderCheckoutHeader();
+      renderOrderSummary();
       updateCartQuantity();
       renderPaymentSummary();
     });
@@ -148,7 +155,7 @@ export function renderOrderSummary() {
   function updateCartQuantity() {
     const cartQuantity = calculateCartQuantity();
     document.querySelector(
-      ".js-return-to-home-link"
+      ".return-to-home-link"
     ).innerHTML = ` ${cartQuantity} items`;
   }
   updateCartQuantity();
