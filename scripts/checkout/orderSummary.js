@@ -7,18 +7,12 @@ import {
 } from "../../data/cart.js";
 import { products, getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
-import { hello } from "https://unpkg.com/supersimpledev@1.0.1/hello.esm.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js"; //export default dayjs function, ek hi fn default export ho skta hai
 import {
   deliveryOptions,
   getDeliveryOption,
 } from "../../data/deliveryOptions.js";
 import { renderPaymentSummary } from "./paymentSummary.js";
-
-hello();
-const today = dayjs();
-const deliveryDate = today.add(7, "days");
-console.log(deliveryDate.format("dddd, MMMM D"));
 
 export function renderOrderSummary() {
   let cartSummaryHTML = "";
@@ -146,6 +140,7 @@ export function renderOrderSummary() {
       );
       container.remove(); // Remove the HTML element for the deleted cart item
       updateCartQuantity();
+      renderPaymentSummary();
     });
   });
 
@@ -206,6 +201,7 @@ export function renderOrderSummary() {
       quantityLabel.innerHTML = newQuantity;
 
       updateCartQuantity(); //updating html inside checkout brackets
+      renderPaymentSummary();
     });
   });
 
@@ -215,6 +211,7 @@ export function renderOrderSummary() {
       const { productId, deliveryOptionId } = element.dataset; //shorthand property
       updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary(); //re run the code, it will generate new html again, deleting previous html
+      renderPaymentSummary();
     });
   });
 }

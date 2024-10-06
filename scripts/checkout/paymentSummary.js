@@ -10,7 +10,7 @@ export function renderPaymentSummary() {
 
   cart.forEach((cartItem) => {
     const product = getProduct(cartItem.productId);
-    productPriceCents = product.priceCents * cartItem.quantity;
+    productPriceCents += product.priceCents * cartItem.quantity;
 
     //loop through the cart and add all shipping cost together
     const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
