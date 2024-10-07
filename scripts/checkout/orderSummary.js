@@ -11,6 +11,7 @@ import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js"; //export defau
 import {
   deliveryOptions,
   getDeliveryOption,
+  calculateDeliveryDate,
 } from "../../data/deliveryOptions.js";
 import { renderPaymentSummary } from "./paymentSummary.js";
 import { renderCheckoutHeader } from "./checkoutHeader.js";
@@ -30,9 +31,7 @@ export function renderOrderSummary() {
 
     const deliveryOption = getDeliveryOption(deliveryOptionId);
 
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-    const dateString = deliveryDate.format("dddd, MMMM D");
+    const dateString = calculateDeliveryDate(deliveryOption);
 
     // Generating the HTML structure for each cart item
     cartSummaryHTML += `
@@ -93,9 +92,7 @@ export function renderOrderSummary() {
 
     //Use Ecmascript external library dayjs to generate today date
     deliveryOptions.forEach((deliveryOption) => {
-      const today = dayjs();
-      const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-      const dateString = deliveryDate.format("dddd, MMMM D");
+      const dateString = calculateDeliveryDate(deliveryOption);
 
       // Generate price using ternary operator
       const priceString =
@@ -201,14 +198,24 @@ export function renderOrderSummary() {
       );
       container.classList.remove("is-editing-quantity"); //hide input and save button, only show update button, just opposite what we did above
 
-      //update the quantity in the html
-      const quantityLabel = document.querySelector(
+      renderCheckoutHeader();
+      renderOrderSummary();
+      renderPaymentSummary();
+
+      /* 
+       We can delete the code below (from the original solution)
+       because instead of using the DOM to update the page directly
+       we can use MVC and re-render everything. This will make sure
+       the page always matches the data.
+
+       // update the quantity in the html
+       const quantityLabel = document.querySelector(
         `.js-quantity-label-${productId}`
       );
       quantityLabel.innerHTML = newQuantity;
 
       updateCartQuantity(); //updating html inside checkout brackets
-      renderPaymentSummary();
+      */
     });
   });
 
