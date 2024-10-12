@@ -1,3 +1,5 @@
+import { formatCurrency } from "../scripts/utils/money.js";
+
 export function getProduct(productId) {
   let matchingProduct;
 
@@ -9,6 +11,48 @@ export function getProduct(productId) {
   });
   return matchingProduct;
 }
+
+class Product {
+  id;
+  image;
+  name;
+  rating;
+  priceCents;
+
+  constructor(productDetails) {
+    this.id = productDetails.id;
+    this.image = productDetails.image;
+    this.name = productDetails.name;
+    this.rating = productDetails.rating;
+    this.priceCents = productDetails.priceCents;
+  }
+
+  //jo kaam hum amazon.js me html code me kar rahe the, wo class ke methods karenge, so code looks cleaner
+  getStarsUrl() {
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+    /* pahle amazon.js me ye code use ho raha tha
+      src="images/ratings/rating-${product.rating.stars * 10}.png" 
+      aur ab ye src = "${product.getStarsUrl}"
+    */
+  }
+
+  getPrice() {
+    return `$${formatCurrency(this.priceCents)}`;
+  }
+}
+
+/*const product1 = new Product({
+  id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
+  image: "images/products/athletic-cotton-socks-6-pairs.jpg",
+  name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
+  rating: {
+    stars: 4.5,
+    count: 87,
+  },
+  priceCents: 1090,
+  keywords: ["socks", "sports", "apparel"],
+});
+console.log(product1);*/
 
 export const products = [
   {
@@ -501,4 +545,16 @@ export const products = [
     },
     priceCents: 2999,
   },
-];
+].map((productDetails) => {
+  return new Product(productDetails);
+});
+
+/*
+.map creates a new array and whatever we return from this inner function is going to go inside that new array. so here we will return new class, so this result is going to be put inside a array.
+ [
+   product1, ---->  function ----> new Product(product1),
+   product2, ---->  function ----> new Product(product2),
+   product3, ---->  function ----> new Product(product3),
+   ...                             ...
+ ]
+*/
