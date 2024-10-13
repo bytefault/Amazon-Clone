@@ -1,3 +1,5 @@
+//youtube link - https://www.youtube.com/watch?v=EerdGm-ehJQ&t=68897s
+
 import { formatCurrency } from "../scripts/utils/money.js";
 
 export function getProduct(productId) {
@@ -38,6 +40,27 @@ class Product {
 
   getPrice() {
     return `$${formatCurrency(this.priceCents)}`;
+  }
+
+  extraInfoHTML() {
+    return "";
+  }
+}
+
+class Clothing extends Product {
+  sizeChartLink;
+
+  constructor(productDetails) {
+    super(productDetails); //run parents constructor
+    this.sizeChartLink = productDetails.sizeChartLink;
+  }
+
+  //this will override / replace the parents's method called method overriding
+  extraInfoHTML() {
+    //super.extraInfoHTML(); if we need access to the parents method
+    return `
+      <a href='${this.sizeChartLink}' traget= '_blank'>Size chart</a>
+    `;
   }
 }
 
@@ -546,6 +569,9 @@ export const products = [
     priceCents: 2999,
   },
 ].map((productDetails) => {
+  if (productDetails.type === "clothing") {
+    return new Clothing(productDetails);
+  }
   return new Product(productDetails);
 });
 
