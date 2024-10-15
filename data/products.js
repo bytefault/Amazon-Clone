@@ -67,6 +67,26 @@ class Clothing extends Product {
 //load products from backend
 export let products = [];
 
+//fetch()= better way to make http requests
+// xml uses a callback to get response whereas fetch uses promises
+export function loadProductsFetch() {
+  //this makes an http request, by default fetch will make a get request, so only give url, then it will get response and save in response
+  const promise = fetch("https://supersimplebackend.dev/products")
+    .then((response) => {
+      return response.json(); //to get the daya for the products, we will use .json(). so this gives us the json or the data attached to the response in this case its our product data. response.json is asychronous it returns a promise. so we need to wait for this promise to finish before we continue to the next step. to do that we can return another promise. it will will array of products
+    })
+    .then((productsData) => {
+      products = productsData.map((productDetails) => {
+        if (productDetails.type === "clothing") {
+          return new Clothing(productDetails);
+        }
+        return new Product(productDetails);
+      });
+    });
+  return promise;
+}
+loadProductsFetch();
+
 //fun is a callback Function = a function to run in the future
 export function loadProducts(fun) {
   const xhr = new XMLHttpRequest();
