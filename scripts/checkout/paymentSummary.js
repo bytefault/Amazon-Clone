@@ -2,6 +2,7 @@ import { cart, calculateCartQuantity } from "../../data/cart.js";
 import { getProduct } from "../../data/products.js";
 import { getDeliveryOption } from "../../data/deliveryOptions.js";
 import { formatCurrency } from "../utils/money.js";
+import { addOrder } from "../../data/orders.js";
 
 export function renderPaymentSummary() {
   // to get the price loop through the cart and for each product, price*quantity and add everything together
@@ -61,9 +62,40 @@ export function renderPaymentSummary() {
             </div>
           </div>
 
-          <button class="place-order-button button-primary">
+          <button class="place-order-button button-primary js-place-order">
             Place your order
           </button>
   `;
   document.querySelector(".js-payment-summary").innerHTML = paymentSummaryHtml;
+
+  //place order kaa code hum khud se naa likh kar backend se lenge
+  document
+    .querySelector(".js-place-order")
+    .addEventListener("click", async () => {
+      try {
+        //we need to send some data to the backend, send our cart, so we will use post, also we will give second parameter an object, gives backend more info about our request
+        const response = await fetch("https://supersimplebackend.dev/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", //json means we are sending some js object
+          },
+          body: JSON.stringify({
+            cart: cart, //actual data we are sending, cart property :  cart array, and finally we cant send obj , we need to convert it to json string
+          }),
+        });
+        //to get the data thats attached to the response, we need to use response.json, it is also a promise, so we can use await
+        const order = await response.json();
+        addOrder(order);
+      } catch (error) {
+        console.log("error, try again later");
+      }
+      //it lets us control url at the top of browser, if we change the location object, it will change the url at the top
+      window.location.href = "orders.html";
+    });
 }
+
+//4 types of requests
+// get= get something from the backend
+// post= create something, let us send data
+// put = update something
+// delete= delete something
