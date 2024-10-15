@@ -69,13 +69,20 @@ renderPymentSummary();        //next step (.then)
 //async = makes a fn returns a promise
 //await = lets us wit for a promise to finish, before going to next line
 async function loadPage() {
-  await loadProductsFetch();
+  try {
+    //throw "error1"; //manually create an error, and throws error, ignore all code, directly go to catch. it throws error synchronously or right away whereas reject throw error asynchrnously or in the future
+    await loadProductsFetch();
 
-  await new Promise((resolve) => {
-    loadCart(() => {
-      resolve();
+    //reject is a fn, it lets us create an error in the future
+    await new Promise((resolve, reject) => {
+      loadCart(() => {
+        //reject("error3");
+        resolve();
+      });
     });
-  });
+  } catch (error) {
+    console.log("error hai");
+  }
 
   renderCheckoutHeader();
   renderOrderSummary();
