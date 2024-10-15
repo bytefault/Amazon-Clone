@@ -26,7 +26,7 @@ import { loadCart } from "../data/cart.js";
 });*/
 
 //we will give array, inside this array, we will give multiple promise, basically we created array of promise and we will give this array to promise.all and its going to wait for all of the promise to finish before going to next step
-Promise.all([
+/* Promise.all([
   loadProductsFetch(),
   new Promise((resolve) => {
     loadCart(() => {
@@ -38,7 +38,7 @@ Promise.all([
   renderCheckoutHeader();
   renderOrderSummary();
   renderPaymentSummary();
-});
+}); */
 
 /* loadProducts(() => {
   loadCart(() => {
@@ -65,3 +65,20 @@ renderOrderSummary();          resolve();
 renderPymentSummary();        //next step (.then)
 
 */
+
+//async = makes a fn returns a promise
+//await = lets us wit for a promise to finish, before going to next line
+async function loadPage() {
+  await loadProductsFetch();
+
+  await new Promise((resolve) => {
+    loadCart(() => {
+      resolve();
+    });
+  });
+
+  renderCheckoutHeader();
+  renderOrderSummary();
+  renderPaymentSummary();
+}
+loadPage();
