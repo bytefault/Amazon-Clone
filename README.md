@@ -24,7 +24,7 @@ This project has been an incredible learning experience. It helped me:
 
 <h2>Live Demo</h2>
 
-Visit the project: <a href=" https://bytefault.github.io/Amazon-Clone/">Amazon Clone</a>
+Visit the project: <a href="https://bytefault.github.io/Amazon-Clone/">Amazon Clone</a>
 
 <h2>Code Highlights</h2>
 
